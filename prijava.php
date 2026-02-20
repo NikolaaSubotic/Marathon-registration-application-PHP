@@ -7,12 +7,35 @@
 
 require_once "Takmicar.class.php";
 
-$t = new Takmicar();
-$t->imePrezime = $_POST['ime_prezime'];
-$t->drzava = $_POST['drzava'];
-$t->kategorija = $_POST['kategorija'];
-$t->brojTelefona = $_POST['broj_telefona'];
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: index.php", true, 303);
+    exit;
+}
 
+$dozvoljeneDrzave = ["Srbija", "BiH", "Crna Gora"];
+$dozvoljeneKategorije = ["Pocetnik", "Senior", "Klasifikovano takmicenje"];
+
+$imePrezime = trim($_POST['ime_prezime'] ?? '');
+$drzava = trim($_POST['drzava'] ?? '');
+$kategorija = trim($_POST['kategorija'] ?? '');
+$brojTelefona = trim($_POST['broj_telefona'] ?? '');
+
+if (
+    $imePrezime === '' ||
+    $brojTelefona === '' ||
+    !in_array($drzava, $dozvoljeneDrzave, true) ||
+    !in_array($kategorija, $dozvoljeneKategorije, true)
+) {
+    header("Location: index.php", true, 303);
+    exit;
+}
+
+$t = new Takmicar();
+$t->imePrezime = mb_substr($imePrezime, 0, 50);
+$t->drzava = $drzava;
+$t->kategorija = $kategorija;
+$t->brojTelefona = mb_substr($brojTelefona, 0, 17);
 $t->prijavi();
 
-header("Location: index.php");
+header("Location: index.php", true, 303);
+exit;

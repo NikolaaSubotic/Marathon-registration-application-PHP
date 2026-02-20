@@ -15,9 +15,16 @@
 require_once "db.php";
 require_once "Takmicar.class.php";
 
-if(isset($_POST['id'])){
-    $t = Takmicar::pronadji($_POST['id']); //pronadji takmicara
-    $t->pridruziBroj($_POST['broj_takmicara']); //pridruzi broj
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = (int)($_POST['id'] ?? 0);
+    $brojTakmicara = trim($_POST['broj_takmicara'] ?? '');
+
+    if ($id > 0 && $brojTakmicara !== '') {
+        $t = Takmicar::pronadji($id);
+        if ($t !== null) {
+            $t->pridruziBroj(mb_substr($brojTakmicara, 0, 50));
+        }
+    }
 }
 
 //izlistaj takmicare bez broja
@@ -26,7 +33,7 @@ $takmicari_bez_broja = $pdo->query("select * from takmicar where broj_takmicara 
 <!DOCTYPE html>
 <html>
     <head>
-        <title>PNikola Subotic</title>
+        <title>Nikola Subotic</title>
     </head>
     <body>
         <h1>Takmicari</h1>
@@ -43,21 +50,21 @@ $takmicari_bez_broja = $pdo->query("select * from takmicar where broj_takmicara 
             <tbody>
                 <?php foreach($takmicari_bez_broja as $red){ ?>
                     <tr>
-                        <td><?= $red['id'] ?></td>
-                        <td><?= $red['ime_prezime'] ?></td>
-                        <td><?= $red['broj_takmicara'] ?></td>
-                        <td><?= $red['drzava'] ?></td>
-                        <td><?= $red['kategorija'] ?></td>
+                        <td><?= (int)$red['id'] ?></td>
+                        <td><?= htmlspecialchars($red['ime_prezime']) ?></td>
+                        <td><?= htmlspecialchars((string)$red['broj_takmicara']) ?></td>
+                        <td><?= htmlspecialchars($red['drzava']) ?></td>
+                        <td><?= htmlspecialchars($red['kategorija']) ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
         <form method="post" action="admin.php">
             <label>ID</label>
-            <input type="number" required name="id">
+            <input type="number" min="1" required name="id">
             <br>
             <label>Broj takmicara</label>
-            <input required name="broj_takmicara">
+            <input maxlength="50" required name="broj_takmicara">
             <br>
             <button>Dodaj broj</button>
         </form>
