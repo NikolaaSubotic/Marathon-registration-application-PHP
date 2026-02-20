@@ -72,6 +72,10 @@ class Takmicar{
         $upit->execute([$id]);
         $podaci = $upit->fetch();
 
+        if(!$podaci){
+            return null;
+        }
+
         $t = new Takmicar();
 
         $t->id = $podaci['id'];
@@ -97,7 +101,11 @@ class Takmicar{
         $upit = $pdo->prepare("select id from takmicar where broj_takmicara=?");
         $upit->execute([$broj]);
         $data = $upit->fetch();
-        $id = $data['id'];
-        return Takmicar::pronadji($id);
+
+        if(!$data){
+            return null;
+        }
+
+        return Takmicar::pronadji($data['id']);
     }
 }

@@ -41,17 +41,17 @@ $takmicari = $pdo->query("select * from takmicar where broj_takmicara is not nul
             <tbody>
                 <?php foreach($takmicari as $red){ ?>
                     <tr>
-                        <td><?= $red['ime_prezime'] ?></td>
-                        <td><?= $red['broj_takmicara'] ?></td>
-                        <td><?= $red['drzava'] ?></td>
-                        <td><?= $red['kategorija'] ?></td>
+                        <td><?= htmlspecialchars($red['ime_prezime']) ?></td>
+                        <td><?= htmlspecialchars($red['broj_takmicara']) ?></td>
+                        <td><?= htmlspecialchars($red['drzava']) ?></td>
+                        <td><?= htmlspecialchars($red['kategorija']) ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
         <form method="post" action="prijava.php">
             <label>Ime i prezime</label>
-            <input name="ime_prezime" required>
+            <input name="ime_prezime" maxlength="50" required>
             <br>
             <label>Drzava</label>
             <select name="drzava" required>
@@ -68,7 +68,7 @@ $takmicari = $pdo->query("select * from takmicar where broj_takmicara is not nul
             </select>
             <br>
             <label>Broj telefona</label>
-            <input name="broj_telefona" required>
+            <input type="tel" name="broj_telefona" maxlength="17" required>
             <br>
             <button>Posalji prijavu</button>
         </form>
